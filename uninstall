@@ -7,14 +7,15 @@ cat <<EOF
 ------------------------------------------
 EOF
 
-readonly C_RESET="\033[0m"
-readonly C_INSTALL="\033[4;34m"
-
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 
-for script in src/*; do
-  name=$(basename $script)
-  printf "Remove ~/.local/bin/${C_INSTALL}${name}${C_RESET}\n"
-  rm ~/.local/bin/${name}
-done
+readonly TOOLS_PATH="${HOME}/.local/bin/uriid1"
+
+log() {
+  echo -e "\033[1;32m-->\033[0m $1"
+}
+
+rm -rf ${TOOLS_PATH}
+
+log "Done!"

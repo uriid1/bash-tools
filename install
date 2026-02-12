@@ -7,42 +7,55 @@ cat <<EOF
 -=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=-
 EOF
 
-readonly C_RESET="\033[0m"
-readonly C_ERROR="\033[1;31m"
-readonly C_INFO="\033[1;32m"
-readonly C_INSTALL="\033[4;34m"
+readonly BIN_PATH="${HOME}/.local/bin/uriid1/bin"
 
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 
+log() {
+  echo -e "\033[1;32m-->\033[0m $1"
+}
+
 warn() {
-  printf "Warning ${1} ${C_ERROR}not found${C_RESET}\n"
+  echo -e "\033[1;33m[!]\033[0m $1"
 }
 
-install() {
-  printf "Install ${C_INSTALL}${1}${C_RESET}...\n"
-}
+#
+# Checking that base tools installed 
+#
 
-basic_tools=(adb dig iptables wc sysctl wget python bc readlink lsblk column)
-for ((i = 0; i < ${#basic_tools[*]}; ++i)); do
-  programm="${basic_tools[$i]}"
+base_tools=(adb dig iptables wc sysctl wget python bc readlink lsblk column jq)
 
-  if ! [ "$(which -a $programm . 2>/dev/null)" ]; then
-    warn "${programm}"
+for ((i = 0; i < ${#base_tools[*]}; ++i)); do
+  tool="${base_tools[$i]}"
+
+  if ! [ "$(which -a $tool . 2>/dev/null)" ]; then
+    warn "Not found: ${tool}"
   fi
 done
 
-if ! echo "${PATH}" | grep -q "${HOME}/.local/bin"; then
-  echo "By default, scripts are placed in the directory ${HOME}/.local/bin"
-  echo "But in your \$PATH variable set in env, this path is not included."
-  echo "Set it manually, for example, if you are using bash -"
-  echo "add the line export PATH=\"\$PATH:~/.local/bin\" to ~/.bashrc"
+#
+# Check path
+#
+
+if ! echo "${PATH}" | grep -q "${BIN_PATH}"; then
+  warn "By default, scripts are placed in the directory ${BIN_PATH}"
+  warn "But in your \$PATH variable set in env, this path is not included."
+  warn "Set it manually, for example, if you are using bash -"
+  warn "add the line \`export PATH=\"\$PATH:${BIN_PATH}\"\` to ~/.bashrc"
   exit $EXIT_FAILURE
 fi
 
+#
+# Installing
+#
+
 chmod +x bin/*
+mkdir -p "${BIN_PATH}"
+
 for script in bin/*; do
   name=$(basename $script)
-  printf "Copy ${C_INSTALL}${name}${C_RESET} to ~/.local/bin/${name}\n"
-  cp $script ~/.local/bin/
+
+  log "Copy ${name} to ${BIN_PATH}"
+  cp $script ${BIN_PATH}
 done
