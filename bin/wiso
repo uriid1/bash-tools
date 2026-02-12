@@ -15,7 +15,7 @@ readonly EXIT_FAILURE=1
 error=0
 findpath="/home/$USER"
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -35,13 +35,13 @@ EOF
 }
 
 if [ $# -eq 0 ]; then
-  help
+  print_help
   exit $EXIT_SUCCESS
 fi
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac

@@ -1,10 +1,10 @@
 #!/bin/env bash
 
 cat <<EOF
-------------------------------------------
+-=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=-
  BY URIID1
- Source https://github.com/uriid1/bscripts
-------------------------------------------
+ Source https://github.com/uriid1/bash-tools
+-=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=-
 EOF
 
 readonly C_RESET="\033[0m"
@@ -23,9 +23,9 @@ install() {
   printf "Install ${C_INSTALL}${1}${C_RESET}...\n"
 }
 
-basic_programs=(adb dig iptables wc sysctl wget python bc readlink lsblk column)
-for ((i = 0; i < ${#basic_programs[*]}; ++i)); do
-  programm="${basic_programs[$i]}"
+basic_tools=(adb dig iptables wc sysctl wget python bc readlink lsblk column)
+for ((i = 0; i < ${#basic_tools[*]}; ++i)); do
+  programm="${basic_tools[$i]}"
 
   if ! [ "$(which -a $programm . 2>/dev/null)" ]; then
     warn "${programm}"
@@ -40,8 +40,8 @@ if ! echo "${PATH}" | grep -q "${HOME}/.local/bin"; then
   exit $EXIT_FAILURE
 fi
 
-chmod +x src/*
-for script in src/*; do
+chmod +x bin/*
+for script in bin/*; do
   name=$(basename $script)
   printf "Copy ${C_INSTALL}${name}${C_RESET} to ~/.local/bin/${name}\n"
   cp $script ~/.local/bin/

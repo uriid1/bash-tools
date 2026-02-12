@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+readonly EXIT_SUCCESS=0
+
+print_help() {
+  local sname=$(echo "$0" | sed 's/.*\///')
+
+cat <<EOF
+By: uriid1
+  Show your local ethernet ip or pulic ip.
+
+Options:
+  --public, -p  Your public ip
+  --all, -a     Public and local ips
+
+Example:
+  $sname           # Show local IPs
+  $sname -p        # Show public IP
+  $sname -a        # Show all IPs
+EOF
+}
+
+case "$1" in
+  --help | -h)
+    print_help
+    exit $EXIT_SUCCESS
+  ;;
+esac
+
+show_local_ethernet_ip() {
+  echo -e \
+       "- - - - - - - - - " \
+       "\nHost IP addresses" \
+       "\n- - - - - - - - - "
+
+  ip -o -4 addr show | awk '{print $2": "$4}' | cut -d/ -f1
+}
+
+show_public_ip() {
+  local ip=$(wget https://ipinfo.io/ip -qO -)
+  echo "${ip}"
+}
+
+case "${1:-}" in
+  -h|--help)
+    print_help
+    exit $EXIT_SUCCESS
+    ;;
+  "")
+    show_local_ethernet_ip
+    exit $EXIT_SUCCESS
+    ;;
+  -p|--public)
+    show_public_ip
+    ;;
+  -a|--all)
+    show_local_ethernet_ip
+    show_public_ip
+    ;;
+  *)
+    echo "Error: Unknown option '$1'" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
+esac

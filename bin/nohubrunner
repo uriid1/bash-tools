@@ -5,7 +5,7 @@ readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 readonly _VERSION='1.0'
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -30,6 +30,7 @@ EOF
 process_name=
 process_pid=
 process_log=
+
 setvars() {
   local name="$1"
   process_name="$name"
@@ -103,7 +104,7 @@ status() {
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac
@@ -111,7 +112,7 @@ esac
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --help | -h)
-      help
+      print_help
       exit $EXIT_SUCCESS
     ;;
     --process)
@@ -138,7 +139,7 @@ while [[ $# -gt 0 ]]; do
     *)
       echo "Unknown option: $1"
       exit $EXIT_FAILURE
-      ;;
+    ;;
   esac
 done
 

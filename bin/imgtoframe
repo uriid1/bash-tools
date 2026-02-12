@@ -12,7 +12,7 @@ frame=32
 image="nil"
 output_name="output"
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -36,13 +36,13 @@ EOF
 }
 
 if [ $# -eq 0 ]; then
-  help
+  print_help
   exit $EXIT_FAILURE
 fi
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac
@@ -52,7 +52,7 @@ esac
 # $3 - height
 # $4 - frame
 # $5 - output name
-function convert_image() { 
+convert_image() { 
   local file=$1
   local width=$2
   local height=$3
@@ -99,7 +99,7 @@ function convert_image() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --help | -help)
-      help
+      print_help
       exit $EXIT_FAILURE
     ;;
 

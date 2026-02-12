@@ -3,7 +3,7 @@
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -25,13 +25,13 @@ EOF
 }
 
 if [ $# -eq 0 ]; then
-  help
+  print_help
   exit $EXIT_SUCCESS
 fi
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac
@@ -75,12 +75,12 @@ if [ -z "$pid" ] && [ -z "$pids" ]; then
 fi
 
 # Function to format and calculate memory sizes
-function floor2f() {
+floor2f() {
   local number=$1
   echo $(awk '{printf "%.2f", $1}' <<< "$number")
 }
 
-function calc() {
+calc() {
   local data=$1
   echo $(bc -l <<< "$data")
 }

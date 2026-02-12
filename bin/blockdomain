@@ -3,7 +3,7 @@
 readonly EXIT_SUCCESS=0
 readonly EXIT_FAILURE=1
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -17,35 +17,35 @@ Usage:
 Options:
   --domains, -d    List of domains
   --chains, -с     List of chains
-  --interface, -i  Interface (Default eth0)
+  --interface, -i  Interface (Default: found first en*)
 
 Example:
-  $sname --domains site-one.com site-two.com --interface eth0 --chains FORWARD OUTPUT INPUT
+  $sname --domains site-one.com site-two.com --interface enp7s0 --chains FORWARD OUTPUT INPUT
 EOF
 }
 
 if [ $# -eq 0 ]; then
-  help
+  print_help
   exit $EXIT_FAILURE
 fi
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac
 
-INTERFACE="eth0"
-CHAINS=()
-DOMAINS=()
+__interface=$(ip -j link show | jq -r '.[] | select(.ifname | test("^en")) | .ifname')
+__chains=()
+__domains=()
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
     --domains | -d)
       shift
       while [[ "$#" -gt 0 && "$1" != --* && "$1" != -* ]]; do
-        DOMAINS+=("$1")
+        __domains+=("$1")
         shift
       done
     ;;
@@ -53,14 +53,14 @@ while [[ "$#" -gt 0 ]]; do
     --chains | -c)
       shift
       while [[ "$#" -gt 0 && "$1" != --* && "$1" != -* ]]; do
-        CHAINS+=("$1")
+        __chains+=("$1")
         shift
       done
     ;;
 
     --interface | -i)
       if [ -n "$2" ]; then
-        INTERFACE="$2"
+        __interface="$2"
         shift 2
       else
         echo "Missing argument for $1 option"
@@ -75,21 +75,21 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 sudo -v
-for domain in "${DOMAINS[@]}"; do
+for domain in "${__domains[@]}"; do
   IPS=$(dig +short $domain)
   for IP in $IPS; do
     if [[ $IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ ]]; then
-      for chain in "${CHAINS[@]}"; do
+      for chain in "${__chains[@]}"; do
         echo "Blocked: domain: $domain Ip: $IP Chain: $chain"
         case $chain in
           "FORWARD" | "forward")
-            sudo iptables -A FORWARD -i $INTERFACE -d $IP -j REJECT
+            sudo iptables -A FORWARD -i $__interface -d $IP -j REJECT
           ;;
           "OUTPUT" | "output")
-            sudo iptables -A OUTPUT -o $INTERFACE -d $IP -j REJECT
+            sudo iptables -A OUTPUT -o $__interface -d $IP -j REJECT
           ;;
           "INPUT" | "input")
-            sudo iptables -A INPUT -i $INTERFACE -s $IP -j REJECT
+            sudo iptables -A INPUT -i $__interface -s $IP -j REJECT
           ;;
         esac
       done

@@ -2,7 +2,7 @@
 
 readonly EXIT_SUCCESS=0
 
-function help() {
+print_help() {
   local sname=$(echo "$0" | sed 's/.*\///')
 
 cat <<EOF
@@ -16,7 +16,7 @@ EOF
 
 case "$1" in
   --help | -h)
-    help
+    print_help
     exit $EXIT_SUCCESS
   ;;
 esac
