@@ -7,12 +7,12 @@
 
 Установка:
 ```bash
-chmod +x install && ./install.sh
+chmod +x install && ./install
 ```
 
 Удаление:
 ```bash
-chmod +x uninstall && ./uninstall.sh
+chmod +x uninstall && ./uninstall
 ```
 
 ## Использование
