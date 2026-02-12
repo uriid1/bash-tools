@@ -37,12 +37,15 @@ done
 #
 # Check path
 #
+mkdir -p "${BIN_PATH}"
 
 if ! echo "${PATH}" | grep -q "${BIN_PATH}"; then
   warn "By default, scripts are placed in the directory ${BIN_PATH}"
   warn "But in your \$PATH variable set in env, this path is not included."
   warn "Set it manually, for example, if you are using bash -"
   warn "add the line \`export PATH=\"\$PATH:${BIN_PATH}\"\` to ~/.bashrc"
+  warn "for zsh - add line to ~/.zshrc"
+  warn "for fish shell run: \`fish_add_path ${BIN_PATH}\` "
   exit $EXIT_FAILURE
 fi
 
@@ -51,7 +54,6 @@ fi
 #
 
 chmod +x bin/*
-mkdir -p "${BIN_PATH}"
 
 for script in bin/*; do
   name=$(basename $script)

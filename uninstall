@@ -1,10 +1,10 @@
 #!/bin/env bash
 
 cat <<EOF
-------------------------------------------
+-=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=-
  BY URIID1
- Source https://github.com/uriid1/bscripts
-------------------------------------------
+ Source https://github.com/uriid1/bash-tools
+-=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=--=-=-
 EOF
 
 readonly EXIT_SUCCESS=0
